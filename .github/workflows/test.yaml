@@ -1,4 +1,4 @@
-name: Test parladata
+name: Test the thing
 
 on:
   push:
