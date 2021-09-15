@@ -8,7 +8,7 @@ export interface Message {
 }
 
 export interface PaymentDetails {
-  ppEmail: string
+  email: string
   tag: number
 }
 
@@ -23,7 +23,7 @@ export async function create (ctx: Context) {
 
 async function handleMessage (message: Message, ctx: Context) {
   const { type } = message
-  const { params, prefix, redis, ppEmail } = ctx
+  const { params, prefix, redis, email } = ctx
   const accountId: string = params.id
   switch (type) {
     case 'paymentDetails':
@@ -34,7 +34,7 @@ async function handleMessage (message: Message, ctx: Context) {
         await redis.set(`${prefix}:accountId:${accountId}:tag`, tag)
       }
       const paymentDetails: PaymentDetails = {
-        ppEmail,
+        email,
         tag
       }
       return Buffer.from(JSON.stringify(paymentDetails))

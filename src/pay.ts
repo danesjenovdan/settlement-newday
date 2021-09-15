@@ -1,18 +1,18 @@
-import * as PayPal from 'paypal-rest-sdk'
+// import * as PayPal from 'paypal-rest-sdk'
 
 // API Credentials
-const clientId = ''
-const clientSecret = ''
+// const clientId = ''
+// const clientSecret = ''
 
 // Recipient email
 const receiver = ''
 
 async function pay () {
-  PayPal.configure({
-    mode: 'sandbox',
-    client_id: clientId,
-    client_secret: clientSecret
-  })
+  // PayPal.configure({
+  //   mode: 'sandbox',
+  //   client_id: clientId,
+  //   client_secret: clientSecret
+  // })
   const paymentRequest = {
     sender_batch_header: {
       sender_batch_id: `${Math.random()}`,
@@ -32,13 +32,14 @@ async function pay () {
       }
     ]
   }
-  PayPal.payout.create(paymentRequest, (err: PayPal.SDKError, pay: any) => {
-    if (pay) {
-      console.log('Created PayPal payment for approval:', pay)
-    } else {
-      console.error('Failed to initiate PayPal payment:', err)
-    }
-  })
+  console.log('[TODO]\t This is where we create the payment.')
+  // PayPal.payout.create(paymentRequest, (err: PayPal.SDKError, pay: any) => {
+  //   if (pay) {
+  //     console.log('Created PayPal payment for approval:', pay)
+  //   } else {
+  //     console.error('Failed to initiate PayPal payment:', err)
+  //   }
+  // })
 }
 
 pay()

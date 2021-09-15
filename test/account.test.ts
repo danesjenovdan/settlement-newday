@@ -2,23 +2,23 @@ import 'mocha'
 import * as chai from 'chai'
 import * as sinon from 'sinon'
 import axios from 'axios'
-import { PayPalSettlementEngine } from '../src'
+import { NewDaySettlementEngine } from '../src'
 import { Account } from '../src/models/account'
 
 const Redis = require('ioredis-mock')
 const assert = Object.assign(chai.assert, sinon.assert)
 
 describe('Accounts', function () {
-  let engine: PayPalSettlementEngine
+  let engine: NewDaySettlementEngine
 
   const testAccount: Account = {
     id: 'testId'
   }
 
   beforeEach(async () => {
-    engine = new PayPalSettlementEngine({
+    engine = new NewDaySettlementEngine({
       redis: new Redis(),
-      ppEmail: 'ppEmail',
+      email: 'email',
       clientId: 'clientId',
       secret: 'secret'
     })

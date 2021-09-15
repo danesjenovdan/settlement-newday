@@ -1,8 +1,7 @@
-import * as PayPal from 'paypal-rest-sdk'
 import * as Koa from 'koa'
+import * as cors from '@koa/cors';
 import * as Router from 'koa-router'
 import * as bodyParser from 'koa-bodyparser'
-import * as ngrok from 'ngrok'
 import * as ioredis from 'ioredis'
 import * as toCamel from 'camelcase-keys'
 import axios from 'axios'
@@ -21,19 +20,16 @@ import { create as createSettlement } from './controllers/settlement'
 const DEFAULT_HOST = 'localhost'
 const DEFAULT_PORT = 3000
 
-// PayPal SDK mode
-const DEFAULT_MODE = 'sandbox'
-
 const DEFAULT_CONNECTOR_URL = 'http://localhost:7771'
 
 const DEFAULT_REDIS_PORT = 6379
 
-const DEFAULT_PREFIX = 'paypal'
+const DEFAULT_PREFIX = 'newday'
 const DEFAULT_ASSET_SCALE = 2
 const DEFAULT_MIN_CENTS = 1000000
 const DEFAULT_CURRENCY = 'USD'
 
-export interface PayPalEngineConfig {
+export interface NewDayEngineConfig {
   host?: string
   port?: number
   mode?: string
@@ -43,7 +39,7 @@ export interface PayPalEngineConfig {
   redisPort?: number
   redis?: ioredis.Redis
 
-  ppEmail: string
+  email: string
   clientId: string
   secret: string
 
@@ -53,7 +49,7 @@ export interface PayPalEngineConfig {
   currency?: string
 }
 
-export class PayPalSettlementEngine {
+export class NewDaySettlementEngine {
   app: Koa
   host: string
   port: number
@@ -67,7 +63,7 @@ export class PayPalSettlementEngine {
   redisPort: number
   redis: ioredis.Redis
 
-  ppEmail: string
+  email: string
   clientId: string
   secret: string
 
@@ -76,8 +72,9 @@ export class PayPalSettlementEngine {
   minCents: number
   currency: string
 
-  constructor (config: PayPalEngineConfig) {
+  constructor (config: NewDayEngineConfig) {
     this.app = new Koa()
+    this.app.use(cors());
     this.app.use(async (ctx, next) => {
       if (ctx.path.includes('messages')) ctx.disableBodyParser = true
       await next()
@@ -86,14 +83,13 @@ export class PayPalSettlementEngine {
 
     this.host = config.host || DEFAULT_HOST
     this.port = config.port || DEFAULT_PORT
-    this.mode = config.mode || DEFAULT_MODE
 
     this.connectorUrl = config.connectorUrl || DEFAULT_CONNECTOR_URL
 
     this.redisPort = config.redisPort || DEFAULT_REDIS_PORT
     this.redis = config.redis || new ioredis(this.redisPort)
 
-    this.ppEmail = config.ppEmail
+    this.email = config.email
     this.clientId = config.clientId
     this.secret = config.secret
 
@@ -103,7 +99,7 @@ export class PayPalSettlementEngine {
     this.currency = config.currency || DEFAULT_CURRENCY
 
     this.app.context.redis = this.redis
-    this.app.context.ppEmail = this.ppEmail
+    this.app.context.email = this.email
     this.app.context.prefix = this.prefix
     this.app.context.assetScale = this.assetScale
     this.app.context.settleAccount = this.settleAccount.bind(this)
@@ -152,11 +148,9 @@ export class PayPalSettlementEngine {
     )
   }
 
+  // TODO
   private async subscribeToTransactions () {
-    const urlName =
-      this.host === DEFAULT_HOST
-        ? await ngrok.connect(this.port)
-        : `https://${this.host}:${this.port}`
+    const urlName = `https://${this.host}:${this.port}`
     const webhook = {
       url: `${urlName}/accounts/${this.clientId}/webhooks`,
       event_types: [
@@ -165,13 +159,15 @@ export class PayPalSettlementEngine {
         }
       ]
     }
-    PayPal.notification.webhook.create(webhook, (err, res) => {
-      if (res) {
-        console.log(`Initiated webhooks to listening at ${webhook.url}`)
-      } else {
-        console.error(`Failed to start webhooks at ${webhook.url}`, err)
-      }
-    })
+    console.log('[TODO]\tThis is where we subscribe to transactions.');
+    // TODO delete old code when not needed for reference any more
+    // PayPal.notification.webhook.create(webhook, (err, res) => {
+    //   if (res) {
+    //     console.log(`Initiated webhooks to listening at ${webhook.url}`)
+    //   } else {
+    //     console.error(`Failed to start webhooks at ${webhook.url}`, err)
+    //   }
+    // })
   }
 
   async getPaymentDetails (accountId: string) {
@@ -197,7 +193,7 @@ export class PayPalSettlementEngine {
         console.error('Error getting payment details from counterparty', err)
         throw err
       })
-      const { ppEmail, tag } = details
+      const { email, tag } = details
       const value = Number(cents) / 10 ** this.assetScale
       const payment = {
         sender_batch_header: {
@@ -213,17 +209,12 @@ export class PayPalSettlementEngine {
               currency: this.currency
             },
             note: `ILP Settlement from ${id}!`,
-            receiver: ppEmail
+            receiver: email
           }
         ]
       }
-      PayPal.payout.create(payment, (err: PayPal.SDKError, pay: any) => {
-        if (pay) {
-          console.log('Created PayPal payment for approval:', pay)
-        } else {
-          console.error('Failed to initiate PayPal payment:', err)
-        }
-      })
+      console.log('[TODO]\tThis is where we payout.');
+      // TODO something something create payment
     } catch (err) {
       console.error(`Settlement to ${id} for ${cents} cents failed:`, err)
     }
@@ -313,22 +304,12 @@ export class PayPalSettlementEngine {
     console.log('Starting to listen on', this.port)
     this.server = this.app.listen(this.port, this.host)
 
-    // PayPal
-    console.log(`Starting PayPal in ${this.mode} mode!`)
-    PayPal.configure({
-      mode: this.mode,
-      client_id: this.clientId,
-      client_secret: this.secret
-    })
-
     // Webhooks
     await this.subscribeToTransactions()
   }
 
   public async close () {
     console.log('Shutting down!')
-    this.host === DEFAULT_HOST
-      ? await Promise.all([ngrok.disconnect(), this.server.close()])
-      : this.server.close()
+    this.server.close()
   }
 }

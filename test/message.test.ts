@@ -4,7 +4,7 @@ import * as sinon from 'sinon'
 import axios from 'axios'
 import { getLocal, Mockttp } from 'mockttp'
 import { randomBytes } from 'crypto'
-import { PayPalSettlementEngine } from '../src'
+import { NewDaySettlementEngine } from '../src'
 import { Account } from '../src/models/account'
 
 const Redis = require('ioredis-mock')
@@ -12,7 +12,7 @@ const assert = Object.assign(chai.assert, sinon.assert)
 
 describe('Messages', function () {
   let mockttp: Mockttp
-  let engine: PayPalSettlementEngine
+  let engine: NewDaySettlementEngine
 
   const testAccount: Account = {
     id: 'testId'
@@ -22,10 +22,10 @@ describe('Messages', function () {
     mockttp = getLocal()
     await mockttp.start(7777)
 
-    engine = new PayPalSettlementEngine({
+    engine = new NewDaySettlementEngine({
       connectorUrl: 'http://localhost:7777',
       redis: new Redis(),
-      ppEmail: 'ppEmail',
+      email: 'email',
       clientId: 'clientId',
       secret: 'secret'
     })
@@ -69,7 +69,7 @@ describe('Messages', function () {
 
     assert.strictEqual(response.status, 200)
     assert.deepEqual(response.data, {
-      ppEmail: engine.ppEmail,
+      email: engine.email,
       tag
     })
   })
@@ -113,7 +113,7 @@ describe('Messages', function () {
 
     assert.strictEqual(response.status, 200)
     assert.deepEqual(response.data, {
-      ppEmail: engine.ppEmail,
+      email: engine.email,
       tag: tag.toString()
     })
   })

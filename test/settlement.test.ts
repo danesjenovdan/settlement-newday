@@ -4,7 +4,7 @@ import * as sinon from 'sinon'
 import axios from 'axios'
 import { getLocal, Mockttp } from 'mockttp'
 import { randomBytes } from 'crypto'
-import { PayPalSettlementEngine } from '../src'
+import { NewDaySettlementEngine } from '../src'
 import { Account } from '../src/models/account'
 
 const Redis = require('ioredis-mock')
@@ -12,7 +12,7 @@ const assert = Object.assign(chai.assert, sinon.assert)
 
 describe('Accounts Settlement', function () {
   let mockttp: Mockttp
-  let engine: PayPalSettlementEngine
+  let engine: NewDaySettlementEngine
 
   let transaction = {
     txn_type: 'send_money',
@@ -29,10 +29,10 @@ describe('Accounts Settlement', function () {
     mockttp = getLocal()
     await mockttp.start(7777)
 
-    engine = new PayPalSettlementEngine({
+    engine = new NewDaySettlementEngine({
       connectorUrl: 'http://localhost:7777',
       redis: new Redis(),
-      ppEmail: 'ppEmail',
+      email: 'email',
       clientId: 'clientId',
       secret: 'secret'
     })
@@ -90,7 +90,7 @@ describe('Accounts Settlement', function () {
 
   it('Attempts to get payment details from counterparty during settlement', async () => {
     const paymentDetails = {
-      ppEmail: 'test@ilp.com',
+      email: 'test@ilp.com',
       tag: 123456
     }
     const mockMessageEndpoint = await mockttp
