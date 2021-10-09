@@ -15,12 +15,12 @@ services:
     depends_on:
       - redis
 
-  node:
-    build: .
-    ports:
-      - "3000:3000"
-    depends_on:
-      - redis
-    command:
-      - yarn
-      - start
+  # node:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - redis
+  #   command:
+  #     - yarn
+  #     - start

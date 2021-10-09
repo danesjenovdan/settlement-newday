@@ -2,6 +2,7 @@ import { Context } from 'koa'
 import { normalizeAsset } from '../utils/normalizeAsset'
 
 export async function create (ctx: Context) {
+  console.log(ctx);
   const { assetScale, params, prefix, redis, request } = ctx
   const accJSON = await redis.get(`${prefix}:accounts:${params.id}`)
   const account = JSON.parse(accJSON)

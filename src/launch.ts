@@ -7,7 +7,7 @@ const ENGINE_MODE = process.env.ENGINE_MODE || 'sandbox'
 
 const CONNECTOR_URL = process.env.CONNECTOR_URL || 'http://localhost:7771'
 
-const REDIS_HOST = process.env.REDIS_HOST || 'redis'
+const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
 const REDIS_PORT = process.env.REDIS_PORT || 6379
 
 const LEDGER_EMAIL = process.env.LEDGER_EMAIL || ''

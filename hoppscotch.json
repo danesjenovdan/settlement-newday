@@ -1,0 +1,193 @@
+[
+    {
+      "name": "settlements-newday",
+      "folders": [],
+      "requests": [
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts/someId",
+          "name": "Get account by id",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "GET",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": null,
+            "body": null
+          }
+        },
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts",
+          "name": "Create account",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "POST",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"id\": \"someId\"\n}"
+          }
+        },
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts/someId",
+          "name": "Delete account by id",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "DELETE",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": null,
+            "body": null
+          }
+        },
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts/someId/messages",
+          "name": "Request payment details",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "content-type",
+              "value": "application/octet-stream",
+              "active": true
+            },
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "POST",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"type\": \"paymentDetails\"\n}"
+          }
+        },
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts/someId/settlement",
+          "name": "Try to settle",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "POST",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"txn_type\": \"send_money\",\n  \"memo\": \"965825195\",\n  \"payment_status\": \"Completed\",\n  \"mc_gross\": \"200.87\"\n}"
+          }
+        },
+        {
+          "v": "1",
+          "endpoint": "http://localhost:3000/accounts/someId/ipn",
+          "name": "IPN?",
+          "params": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "headers": [
+            {
+              "key": "",
+              "value": "",
+              "active": true
+            }
+          ],
+          "method": "POST",
+          "auth": {
+            "authType": "none",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"txn_type\": \"send_money\",\n  \"memo\": \"965825195\",\n  \"payment_status\": \"Completed\",\n  \"mc_gross\": \"200.87\"\n}"
+          }
+        }
+      ]
+    }
+  ]

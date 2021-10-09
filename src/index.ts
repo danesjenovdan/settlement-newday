@@ -17,7 +17,7 @@ import {
 import { create as createMessage } from './controllers/message'
 import { create as createSettlement } from './controllers/settlement'
 
-const DEFAULT_HOST = 'localhost'
+const DEFAULT_HOST = '0.0.0.0'
 const DEFAULT_PORT = 3000
 
 const DEFAULT_CONNECTOR_URL = 'http://localhost:7771'
@@ -160,6 +160,7 @@ export class NewDaySettlementEngine {
       ]
     }
     console.log('[TODO]\tThis is where we subscribe to transactions.');
+    console.log('\tIf I understand correctly we might not need this.');
     // TODO delete old code when not needed for reference any more
     // PayPal.notification.webhook.create(webhook, (err, res) => {
     //   if (res) {
@@ -170,6 +171,8 @@ export class NewDaySettlementEngine {
     // })
   }
 
+  // TODO review
+  // This is probably not needed since this is a receiver node.
   async getPaymentDetails (accountId: string) {
     const url = `${this.connectorUrl}\\accounts\\${accountId}\\messages`
     const message = {
@@ -188,36 +191,41 @@ export class NewDaySettlementEngine {
   async settleAccount (account: Account, cents: string) {
     const { id } = account
     console.log(`Attempting to send ${cents} cents to account: ${id}`)
-    try {
-      const details = await this.getPaymentDetails(id).catch(err => {
-        console.error('Error getting payment details from counterparty', err)
-        throw err
-      })
-      const { email, tag } = details
-      const value = Number(cents) / 10 ** this.assetScale
-      const payment = {
-        sender_batch_header: {
-          sender_batch_id: uuidv4(),
-          email_subject: `Payout of ${cents} cents!`,
-          email_message: tag
-        },
-        items: [
-          {
-            recipient_type: 'EMAIL',
-            amount: {
-              value,
-              currency: this.currency
-            },
-            note: `ILP Settlement from ${id}!`,
-            receiver: email
-          }
-        ]
-      }
-      console.log('[TODO]\tThis is where we payout.');
-      // TODO something something create payment
-    } catch (err) {
-      console.error(`Settlement to ${id} for ${cents} cents failed:`, err)
-    }
+    console.log(`[TODO]\tNothing happened.`);
+    // try {
+    //   // const details = await this.getPaymentDetails(id).catch(err => {
+    //   //   console.error('Error getting payment details from counterparty', err)
+    //   //   throw err
+    //   // })
+    //   const details = {
+    //     email: 'fake',
+    //     tag: 'fake',
+    //   };
+    //   const { email, tag } = details
+    //   const value = Number(cents) / 10 ** this.assetScale
+    //   const payment = {
+    //     sender_batch_header: {
+    //       sender_batch_id: uuidv4(),
+    //       email_subject: `Payout of ${cents} cents!`,
+    //       email_message: tag
+    //     },
+    //     items: [
+    //       {
+    //         recipient_type: 'EMAIL',
+    //         amount: {
+    //           value,
+    //           currency: this.currency
+    //         },
+    //         note: `ILP Settlement from ${id}!`,
+    //         receiver: email
+    //       }
+    //     ]
+    //   }
+    //   console.log('[TODO]\tThis is where we payout.');
+    //   // TODO something something create payment
+    // } catch (err) {
+    //   console.error(`Settlement to ${id} for ${cents} cents failed:`, err)
+    // }
   }
 
   private async handleOutgoingTransaction (ctx: Koa.Context) {
